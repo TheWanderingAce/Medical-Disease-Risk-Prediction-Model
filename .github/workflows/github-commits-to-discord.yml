@@ -10,7 +10,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          node-version: 24
       
       - name: Send commit embed to Discord
         uses: tristanbudd/discord-commit-github-action@1.0.1
