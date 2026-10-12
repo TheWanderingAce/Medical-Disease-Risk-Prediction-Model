@@ -1,0 +1,31 @@
+name: Discord Commit Notification
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Send commit embed to Discord
+        uses: tristanbudd/discord-commit-github-action@1.0.1
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+          text-content: "A new commit was just made!"
+          embed-title: "Github Commit Notification"
+          embed-colour: "#9B32FF"
+          embed-footer-text: "Powered by GitHub Actions"
+          embed-footer-icon-url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+          embed-footer-timestamp: true
+          show-commit-message: true
+          show-changed-files: true
+          show-commit-branch: true
+          show-commit-author: true
+          show-commit-link: true
