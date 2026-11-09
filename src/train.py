@@ -10,6 +10,7 @@ from sklearn.metrics import (
 from src.preprocessing import split_data
 from src.models.logistic_regression import create_model as create_logistic_model
 from src.models.random_forest import create_model as create_random_forest_model
+from src.models.gradient_boosting import create_model as create_gradient_boosting_model
 
 
 def evaluate_model(model, X_val, y_val):
@@ -55,7 +56,8 @@ def train_models():
     # Create models
     models = {
         "Logistic Regression": create_logistic_model(),
-        "Random Forest": create_random_forest_model()
+        "Random Forest": create_random_forest_model(),
+        "Gradient Boosting": create_gradient_boosting_model(),
     }
 
     results = {}
