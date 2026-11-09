@@ -39,7 +39,13 @@ def load_data():
             #Load the CSV file into pandas dataframe
             df = pd.read_csv(csv_file)
 
-            
+    #Class split calculation
+    class_counts = df["Diabetes_binary"].value_counts()
+    class_percentages = df["Diabetes_binary"].value_counts(normalize=True) * 100
+
+    print(f"Negative Class (0):\n\nClass Count: {class_counts[0]}\nClass Percentage: {class_percentages[0]:.2f}%\n")
+    print(f"Positive Class (1):\n\nClass Count: {class_counts[1]}\nClass Percentage: {class_percentages[1]:.2f}%\n")
+    
     return df
             
 
