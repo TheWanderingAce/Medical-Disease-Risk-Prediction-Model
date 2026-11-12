@@ -6,10 +6,12 @@ from sklearn.metrics import (
     f1_score,
     confusion_matrix
 )
+from sklearn.utils.class_weight import compute_sample_weight
 
 from src.preprocessing import split_data
 from src.models.logistic_regression import create_model as create_logistic_model
 from src.models.random_forest import create_model as create_random_forest_model
+from src.models.gradient_boosting import create_model as create_gradient_boosting_model
 
 
 def evaluate_model(model, X_val, y_val):
@@ -55,7 +57,9 @@ def train_models():
     # Create models
     models = {
         "Logistic Regression": create_logistic_model(),
-        "Random Forest": create_random_forest_model()
+        "Random Forest": create_random_forest_model(),
+        "Weighted Gradient Boosting": create_gradient_boosting_model(),
+        # "Non-Weighted Gradient Boosting": create_gradient_boosting_model(),
     }
 
     results = {}
@@ -66,7 +70,11 @@ def train_models():
         print(f"Training {name}")
         print(f"{'=' * 40}")
 
-        model.fit(X_train, y_train)
+        if name != "Weighted Gradient Boosting":
+            model.fit(X_train, y_train)
+        else:
+            sample_weights = compute_sample_weight("balanced", y_train)
+            model.fit(X_train, y_train, sample_weight=sample_weights)
 
         results[name] = evaluate_model(
             model,
