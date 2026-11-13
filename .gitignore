@@ -205,6 +205,9 @@ cython_debug/
 # Temporary file for partial code execution
 tempCodeRunnerFile.py
 
+#saved models
+saved_models/
+
 # Ruff stuff:
 .ruff_cache/
 
