@@ -1,5 +1,7 @@
+import joblib
+from pathlib import Path
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import (
+from sklearn.metrics import (  
     accuracy_score,
     precision_score,
     recall_score,
@@ -44,6 +46,8 @@ def evaluate_model(model, X_val, y_val):
 def train_models():
     # Load and split dataset
     X_train, X_test, y_train, y_test = split_data()
+    X_full_train = X_train.copy()
+    y_full_train = y_train.copy()
 
     # Create validation set from training data
     X_train, X_val, y_train, y_val = train_test_split(
@@ -94,6 +98,53 @@ def train_models():
             f"Recall={metrics['recall']:.4f}, "
             f"F1={metrics['f1']:.4f}"
         )
+    # Select best model based on F1-score
+    best_model_name = max(  
+        results,
+        key=lambda name: results[name]["f1"]
+    )
+
+    # Retrain selected model on the full training portion
+    best_model = models[best_model_name]
+
+    if best_model_name == "Weighted Gradient Boosting":
+        weights = compute_sample_weight("balanced", y_full_train)
+        best_model.fit(
+            X_full_train,
+            y_full_train,
+            sample_weight=weights
+        )
+    else:
+        best_model.fit(X_full_train, y_full_train)
+
+    # Evaluate best model on test dataset
+    print("\nFINAL TEST EVALUATION")
+    print("-" * 40)
+
+    test_results = evaluate_model(best_model, X_test, y_test)
+
+    # Save trained model and feature names
+    model_dir = Path("saved_models")
+    model_dir.mkdir(exist_ok=True)
+
+    model_path = model_dir / "diabetes_model.joblib"
+
+    joblib.dump(
+        {
+            "model": best_model,
+            "features": X_full_train.columns.tolist(),
+            "model_name": best_model_name
+        },
+        model_path
+    )
+
+    print(f"\nModel saved to: {model_path}")
+
+    print("\nBEST MODEL")
+    print("-" * 40)
+    print(f"Model: {best_model_name}")
+    print(f"F1-score: {results[best_model_name]['f1']:.4f}")
+
 
     return models, results
 
